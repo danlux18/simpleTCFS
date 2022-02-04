@@ -1,0 +1,49 @@
+name: Realease
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Backend:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install java 11 (Temurin)
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Set up Maven 3.8.4
+        uses: stCarolas/setup-maven@v4.2
+        with:
+          maven-version: 3.8.4
+      - name: Create backend artifact
+        working-directory: ./backend
+        run: mvn clean install
+      - name: Archive backend jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend-jar
+          path: |
+            backend/target/simpleTCFS*.jar
+      - name: Create cli artifact
+        working-directory: ./cli
+        run: mvn clean install
+      - name: Archive cli jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: cli-jar
+          path: |
+            cli/target/simpleTCFS*.jar
+      - name: Create frontend artifact
+        working-directory: ./dotNet
+        run: mvn clean install
+      - name: Archive frontend jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: dotNet-jar
+          path: |
+            dotNet/target/simpleTCFS*.jar
