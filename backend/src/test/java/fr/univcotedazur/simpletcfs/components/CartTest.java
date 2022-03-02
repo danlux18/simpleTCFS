@@ -13,18 +13,22 @@ import fr.univcotedazur.simpletcfs.exceptions.NegativeQuantityException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
 class CartTest {
+
+    @Autowired
+    private CartModifier cart;
+
+    @Autowired
+    private CartProcessor processor;
 
     @Autowired
     private InMemoryDatabase memory;
@@ -34,12 +38,6 @@ class CartTest {
 
     @Autowired
     private CustomerFinder finder;
-
-    @Autowired
-    private CartModifier cart;
-
-    @Autowired
-    private CartProcessor processor;
 
     private Customer john;
 
@@ -91,6 +89,7 @@ class CartTest {
         cart.update(john, new Item(Cookies.DARK_TEMPTATION, 3));
         cart.update(john, new Item(Cookies.CHOCOLALALA, 3));
         Set<Item> oracle = Set.of(new Item(Cookies.CHOCOLALALA, 5), new Item(Cookies.DARK_TEMPTATION, 3));
+        assertTrue(oracle.contains(new Item(Cookies.CHOCOLALALA, 5)));
         assertEquals(oracle, processor.contents(john));
     }
 
